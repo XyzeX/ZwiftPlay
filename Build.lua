@@ -1,7 +1,7 @@
 -- premake5.lua
 workspace "ZwiftPlay"
    architecture "x64"
-   configurations { "Debug", "Release", "Dist" }
+   configurations { "Debug", "Release" }
    startproject "ZwiftPlay"
 
    -- Workspace-wide build options for MSVC
