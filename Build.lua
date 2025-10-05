@@ -1,8 +1,8 @@
 -- premake5.lua
-workspace "App"
+workspace "ZwiftPlay"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "App"
+   startproject "ZwiftPlay"
 
    -- Workspace-wide build options for MSVC
    filter "system:windows"
@@ -12,4 +12,4 @@ OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 group ""
 
-include "App/Build-App.lua"
+include "ZwiftPlay/Build-App.lua"
