@@ -12,4 +12,4 @@ OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 group ""
 
-include "ZwiftPlay/Build-App.lua"
+include "ZwiftPlay/Build-ZwiftPlay.lua"

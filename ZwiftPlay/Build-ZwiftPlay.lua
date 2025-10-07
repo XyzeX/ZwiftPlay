@@ -21,7 +21,7 @@ project "ZwiftPlay"
 
     filter "system:windows"
         systemversion "latest"
-        defines { "WINDOWS" }
+        defines { "_WINDOWS" }
 
     filter "configurations:Debug"
         defines { "DEBUG" }
@@ -32,4 +32,4 @@ project "ZwiftPlay"
         defines { "RELEASE" }
         runtime "Release"
         optimize "On"
-        symbols "On"
+        symbols "Off"
