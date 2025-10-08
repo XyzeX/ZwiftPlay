@@ -5,8 +5,10 @@
 enum DeviceStatus
 {
 	NotConnected,
+	NotFound,
 	Found,
-	Connecting,
+	ReadyToConnect,
+	Connected
 };
 
 class BLEDevice
@@ -15,7 +17,10 @@ public:
 	BLEDevice(const char* mac = "");
 
 	bool InitializeAdapter();
-	bool Connect(const int scanTimeout = 50000);
+	bool Connect(const int msTimeout);
+	void SubscribeToUUID(const char* uuid);
+
+	bool IsConnected() const;
 
 private:
 	SimpleBLE::Adapter mAdapter;

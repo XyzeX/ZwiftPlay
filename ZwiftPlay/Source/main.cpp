@@ -15,6 +15,6 @@ int main()
 	if (!device.InitializeAdapter())
 		throw "Bluetooth module could not be found\n";
 
-	while (!device.Connect())
+	while (!device.Connect(5000))
 		std::cout << "Connection failed, retrying\n";
 }
