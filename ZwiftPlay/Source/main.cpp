@@ -1,6 +1,8 @@
-#include <iostream>
+#include "ZwiftClick.h"
 
-#include "BLEDevice.h"
+#include <iostream>
+#include <thread>
+#include <chrono>
 
 int main()
 {
@@ -8,13 +10,14 @@ int main()
 	std::cout << "Make sure the Zwift Click/Play is NOT paired in windows\n";
 #endif
 
-	BLEDevice device = BLEDevice("ce:e3:bd:7f:c2:9c");
-	//BLEDevice device = BLEDevice("88:c9:e8:6a:7a:43");
-	//BLEDevice device = BLEDevice("44:0c:de:db:9e:ee");
+	ZwiftClick click = ZwiftClick("ce:e3:bd:7f:c2:9c");
+	click.Initialize();
 
-	if (!device.InitializeAdapter())
-		throw "Bluetooth module could not be found\n";
-
-	while (!device.Connect(5000))
+	while (!click.Connect())
 		std::cout << "Connection failed, retrying\n";
+
+	while (true)
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	click.Close();
 }

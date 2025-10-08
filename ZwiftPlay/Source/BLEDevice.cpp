@@ -19,7 +19,7 @@ BLEDevice::BLEDevice(const char* mac)
         mTargetMac = true;
 }
 
-bool BLEDevice::InitializeAdapter()
+void BLEDevice::InitializeAdapter()
 {
     const std::vector<SimpleBLE::Adapter> adapters = SimpleBLE::Adapter::get_adapters();
 
@@ -49,13 +49,11 @@ bool BLEDevice::InitializeAdapter()
                 mAdapter.scan_stop();
             }
         });
-    
-	return true;
 }
 
 bool BLEDevice::Connect(const int msTimeout)
 {
-    if (!mAdapterReady)
+    if (!mAdapterReady || IsConnected())
         return false;
 
     mAdapter.scan_start();
@@ -84,16 +82,53 @@ bool BLEDevice::Connect(const int msTimeout)
     mDeviceStatus = Connected;
     std::cout << "Successfully connected to: [" << mPeripheral.address() << "]\n";
 
+    for (auto& s : mPeripheral.services())
+    {
+        std::cout << "Service: " << s.uuid() << '\n';
+        for (auto& c : s.characteristics())
+            std::cout << "Chars: " << c.uuid() << '\n';
+    }
+
     return true;
 }
 
-void BLEDevice::SubscribeToUUID(const char* uuid)
+void BLEDevice::WriteToUUID(const char* serviceUUID, const char* charUUID, const SimpleBLE::ByteArray data)
 {
-    const SimpleBLE::BluetoothUUID simpleUUID = SimpleBLE::BluetoothUUID(uuid);
-    mPeripheral.notify(simpleUUID, simpleUUID, [&](SimpleBLE::ByteArray bytes)
+    if (!IsConnected())
+        return;
+
+    mPeripheral.write_command(serviceUUID, charUUID, data);
+}
+
+bool BLEDevice::SubscribeToUUID(const char* uuid)
+{
+    if (!IsConnected())
+        return false;
+
+    for (auto& s : mPeripheral.services())
+    {
+        for (auto& c : s.characteristics())
         {
-            std::cout << "Received: " << bytes << '\n';
-        });
+            if (!strcmp(c.uuid().c_str(), uuid))
+            {
+                std::cout << "Subscribing to: " << uuid << '\n';
+                mPeripheral.notify(s.uuid(), c.uuid(), [&](SimpleBLE::ByteArray bytes)
+                    {
+                        std::cout << "Received: ";  
+                        for (auto b : bytes) std::cout << std::hex << static_cast<int>(b) << ' ';
+                        std::cout << '\n';
+                    });
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void BLEDevice::Disconnect()
+{
+    if (IsConnected())
+        mPeripheral.disconnect();
 }
 
 bool BLEDevice::IsConnected() const

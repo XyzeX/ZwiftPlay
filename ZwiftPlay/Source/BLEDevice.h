@@ -16,9 +16,12 @@ class BLEDevice
 public:
 	BLEDevice(const char* mac = "");
 
-	bool InitializeAdapter();
+	void InitializeAdapter();
 	bool Connect(const int msTimeout);
-	void SubscribeToUUID(const char* uuid);
+
+	void WriteToUUID(const char* serviceUUID, const char* charUUID, SimpleBLE::ByteArray data);
+	bool SubscribeToUUID(const char* uuid);
+	void Disconnect();
 
 	bool IsConnected() const;
 
