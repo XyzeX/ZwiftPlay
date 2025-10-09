@@ -13,5 +13,8 @@ public:
 	bool IsConnected() const;
 
 private:
+	void PressKey(const char vkCode) const;
+
+private:
 	BLEDevice mDevice;
 };

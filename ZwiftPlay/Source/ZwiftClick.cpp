@@ -1,6 +1,7 @@
 #include "ZwiftClick.h"
 
 #include <iostream>
+#include <Windows.h>
 
 const char* CONTROLS_UUID = "00000002-19ca-4651-86e5-fa29dcdd09d1";
 const char* BATTERY_UUID = "00002a19-0000-1000-8000-00805f9b34fb";
@@ -16,6 +17,7 @@ ZwiftClick::ZwiftClick(const char* mac)
 
 void ZwiftClick::Initialize()
 {
+	PressKey('A');
 	mDevice.InitializeAdapter();
 }
 
@@ -45,3 +47,23 @@ bool ZwiftClick::IsConnected() const
 {
 	return mDevice.IsConnected();
 }
+
+#ifdef _WINDOWS
+void ZwiftClick::PressKey(const char vkCode) const
+{
+	INPUT input{ 0 };
+	input.type = INPUT_KEYBOARD;
+	input.ki.wVk = vkCode;
+
+	SendInput(1, &input, sizeof(INPUT));
+
+	input.ki.dwFlags = KEYEVENTF_KEYUP;
+	SendInput(1, &input, sizeof(INPUT));
+}
+#else
+void ZwiftClick::PressKey(const char vkCode) const
+{
+	std::cerr << "No implementation yet...\n";
+	static_assert("Implement PressKey");
+}
+#endif
