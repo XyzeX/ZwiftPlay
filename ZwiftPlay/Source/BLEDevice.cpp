@@ -15,7 +15,7 @@ static inline ull GetTime()
 BLEDevice::BLEDevice(const char* mac)
 	: mMac(mac)
 {
-    if (strcmp(mac, ""))
+    if (std::strcmp(mac, ""))
         mTargetMac = true;
 }
 
@@ -41,7 +41,7 @@ void BLEDevice::InitializeAdapter()
             if (!mTargetMac)
                 if (peripheral.is_connectable())
                     std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "]\n";
-            if (!strcmp(peripheral.address().c_str(), mMac))
+            if (!std::strcmp(peripheral.address().c_str(), mMac))
             {
                 std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "]\n";
                 mPeripheral = peripheral;
@@ -98,31 +98,6 @@ void BLEDevice::WriteToUUID(const char* serviceUUID, const char* charUUID, const
         return;
 
     mPeripheral.write_command(serviceUUID, charUUID, data);
-}
-
-bool BLEDevice::SubscribeToUUID(const char* uuid)
-{
-    if (!IsConnected())
-        return false;
-
-    for (auto& s : mPeripheral.services())
-    {
-        for (auto& c : s.characteristics())
-        {
-            if (!strcmp(c.uuid().c_str(), uuid))
-            {
-                std::cout << "Subscribing to: " << uuid << '\n';
-                mPeripheral.notify(s.uuid(), c.uuid(), [&](SimpleBLE::ByteArray bytes)
-                    {
-                        std::cout << "Received: ";  
-                        for (auto b : bytes) std::cout << std::hex << static_cast<int>(b) << ' ';
-                        std::cout << '\n';
-                    });
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 void BLEDevice::Disconnect()

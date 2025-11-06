@@ -17,4 +17,7 @@ private:
 
 private:
 	BLEDevice mDevice;
+
+	enum Button { Plus = 0, Minus = 1 };
+	bool buttonStatus[2]{ false, false };
 };
